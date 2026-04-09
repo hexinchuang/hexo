@@ -103,4 +103,4 @@ theme: butterfly
 deploy:
   type: git
   repo: https://github.com/hexinchuang/hexo.git
-  branch: gh-pages
+  branch: main

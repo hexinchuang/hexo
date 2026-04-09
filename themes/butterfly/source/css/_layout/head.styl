@@ -121,7 +121,78 @@
   display: none
 
 .hamburger-overlay.active
-  display: block// Hamburger menu styles
+  display: block
+
+// User profile styles for hamburger menu
+.user-profile
+  padding: 20px
+  border-bottom: 1px solid $border-line
+  margin-bottom: 20px
+
+.avatar-container
+  text-align: center
+  margin-bottom: 15px
+
+.avatar
+  width: 80px
+  height: 80px
+  border-radius: 50%
+  object-fit: cover
+
+.user-info
+  text-align: center
+  margin-bottom: 15px
+
+.user-info h4
+  margin: 5px 0
+  font-size: 18px
+  color: $font-black
+
+.user-info p
+  margin: 0
+  font-size: 14px
+  color: $font-gray
+
+.stats
+  display: flex
+  justify-content: space-around
+  text-align: center
+
+.stat
+  flex: 1
+
+.stat .number
+  display: block
+  font-size: 18px
+  font-weight: 600
+  color: $theme-color
+
+.stat .label
+  display: block
+  font-size: 12px
+  color: $font-gray
+
+// Hamburger menu items
+.hamburger-menu-items
+  list-style: none
+  padding: 0
+  margin: 0
+
+.hamburger-menu-items li
+  margin-bottom: 5px
+
+.hamburger-menu-items a
+  display: block
+  padding: 12px 15px
+  text-decoration: none
+  color: $font-black
+  border-radius: 6px
+  transition: background 0.3s ease
+  &:hover
+    background: $light-bg
+    color: $theme-color
+
+.// Hamburger menu styles
 .hamburger-menu
   position: fixed
   top: 0
@@ -218,7 +289,9 @@
   transition: background 0.3s ease
   &:hover
     background: $light-bg
-    color: $theme-color// Hamburger menu styles
+    color: $theme-color
+
+// Hamburger menu styles
 .hamburger-menu
   position: fixed
   top: 0
@@ -315,7 +388,9 @@
   transition: background 0.3s ease
   &:hover
     background: $light-bg
-    color: $theme-color// Hamburger menu styles
+    color: $theme-color
+
+// Hamburger menu styles
 .hamburger-menu
   position: fixed
   top: 0
@@ -412,201 +487,9 @@
   transition: background 0.3s ease
   &:hover
     background: $light-bg
-    color: $theme-color// Hamburger menu styles
-.hamburger-menu
-  position: fixed
-  top: 0
-  right: -300px
-  width: 280px
-  height: 100vh
-  background: white
-  box-shadow: -2px 0 10px rgba($grey, 0.1)
-  transition: right 0.3s ease
-  z-index: 1001
-  padding: 20px
-  overflow-y: auto
+    color: $theme-color
 
-.hamburger-menu.active
-  right: 0
-
-.hamburger-overlay
-  position: fixed
-  top: 0
-  left: 0
-  width: 100vw
-  height: 100vh
-  background: rgba(0,0,0,0.5)
-  z-index: 1000
-  display: none
-
-.hamburger-overlay.active
-  display: block
-
-// User profile styles for hamburger menu
-.user-profile
-  padding: 20px
-  border-bottom: 1px solid $border-line
-  margin-bottom: 20px
-
-.avatar-container
-  text-align: center
-  margin-bottom: 15px
-
-.avatar
-  width: 80px
-  height: 80px
-  border-radius: 50%
-  object-fit: cover
-
-.user-info
-  text-align: center
-  margin-bottom: 15px
-
-.user-info h4
-  margin: 5px 0
-  font-size: 18px
-  color: $font-black
-
-.user-info p
-  margin: 0
-  font-size: 14px
-  color: $font-gray
-
-.stats
-  display: flex
-  justify-content: space-around
-  text-align: center
-
-.stat
-  flex: 1
-
-.stat .number
-  display: block
-  font-size: 18px
-  font-weight: 600
-  color: $theme-color
-
-.stat .label
-  display: block
-  font-size: 12px
-  color: $font-gray
-
-// Hamburger menu items
-.hamburger-menu-items
-  list-style: none
-  padding: 0
-  margin: 0
-
-.hamburger-menu-items li
-  margin-bottom: 5px
-
-.hamburger-menu-items a
-  display: block
-  padding: 12px 15px
-  text-decoration: none
-  color: $font-black
-  border-radius: 6px
-  transition: background 0.3s ease
-  &:hover
-    background: $light-bg
-    color: $theme-color// Hamburger menu styles
-.hamburger-menu
-  position: fixed
-  top: 0
-  right: -300px
-  width: 280px
-  height: 100vh
-  background: white
-  box-shadow: -2px 0 10px rgba($grey, 0.1)
-  transition: right 0.3s ease
-  z-index: 1001
-  padding: 20px
-  overflow-y: auto
-
-.hamburger-menu.active
-  right: 0
-
-.hamburger-overlay
-  position: fixed
-  top: 0
-  left: 0
-  width: 100vw
-  height: 100vh
-  background: rgba(0,0,0,0.5)
-  z-index: 1000
-  display: none
-
-.hamburger-overlay.active
-  display: block
-
-// User profile styles for hamburger menu
-.user-profile
-  padding: 20px
-  border-bottom: 1px solid $border-line
-  margin-bottom: 20px
-
-.avatar-container
-  text-align: center
-  margin-bottom: 15px
-
-.avatar
-  width: 80px
-  height: 80px
-  border-radius: 50%
-  object-fit: cover
-
-.user-info
-  text-align: center
-  margin-bottom: 15px
-
-.user-info h4
-  margin: 5px 0
-  font-size: 18px
-  color: $font-black
-
-.user-info p
-  margin: 0
-  font-size: 14px
-  color: $font-gray
-
-.stats
-  display: flex
-  justify-content: space-around
-  text-align: center
-
-.stat
-  flex: 1
-
-.stat .number
-  display: block
-  font-size: 18px
-  font-weight: 600
-  color: $theme-color
-
-.stat .label
-  display: block
-  font-size: 12px
-  color: $font-gray
-
-// Hamburger menu items
-.hamburger-menu-items
-  list-style: none
-  padding: 0
-  margin: 0
-
-.hamburger-menu-items li
-  margin-bottom: 5px
-
-.hamburger-menu-items a
-  display: block
-  padding: 12px 15px
-  text-decoration: none
-  color: $font-black
-  border-radius: 6px
-  transition: background 0.3s ease
-  &:hover
-    background: $light-bg
-    color: $theme-color#page-header
+#page-header
   position: relative
   width: 100%
   background-color: $light-blue
