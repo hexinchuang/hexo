@@ -1,0 +1,190 @@
+extends includes/layout.pug
+
+block content
+  include ./includes/mixins/indexPostUI.pug
+  
+  // Carousel Section
+  if theme.index_carousel.enable
+    .carousel-wrapper
+      .carousel-container(style='height: #{theme.index_carousel.height or "400px"}')
+        .carousel-slide
+          each article, index in page.posts.data.slice(0, 3)  // Limit to 3 slides
+            - const link = article.link || article.path
+            - const title = article.title || _p('no_title')
+            - const postCover = article.cover || theme.cover.default_cover
+            if postCover && index == 0
+              .slide-item.active
+                a(href=url_for(link) title=title)
+                  img.carousel-img(src=url_for(postCover) alt=title)
+                .slide-info
+                  h2.slide-title= title
+                  p.slide-excerpt= postDesc(article)
+            else if postCover
+              .slide-item
+                a(href=url_for(link) title=title)
+                  img.carousel-img(src=url_for(postCover) alt=title)
+                .slide-info
+                  h2.slide-title= title
+                  p.slide-excerpt= postDesc(article)
+        .carousel-nav
+          each article, index in page.posts.data.slice(0, 3)
+            if index == 0
+              .nav-dot.active(data-slide=index)
+            else
+              .nav-dot(data-slide=index)
+        .carousel-controls
+          .prev-slide ❮
+          .next-slide ❯
+  
+  .main-content-wrapper
+    // Announcement and Featured Post Section
+    .side-content
+      // Announcement Section
+      if theme.announcement.enable
+        .announcement-box
+          .announcement-header
+            i.fas.fa-bullhorn
+            h3 Announcement
+          .announcement-content
+            != theme.announcement.content
+      
+      // Featured Post Section
+      if theme.featured_post.enable
+        .featured-post
+          .featured-header
+            i.fas.fa-star
+            h3 Featured Post
+          each article, index in page.posts.data.slice(0, theme.featured_post.limit)
+            - const link = article.link || article.path
+            - const title = article.title || _p('no_title')
+            - const postCover = article.cover || theme.cover.default_cover
+            .featured-item
+              if postCover
+                .featured-cover
+                  a(href=url_for(link) title=title)
+                    img(src=url_for(postCover) alt=title)
+              .featured-info
+                a.featured-title(href=url_for(link) title=title)= title
+                .featured-meta
+                  span.date= date(article.date, config.date_format)
+                  span.read-time= article.readtime || '3 min read'
+                .featured-excerpt= postDesc(article)
+    
+    // Latest Posts Section
+    .main-posts-area
+      .latest-posts-header
+        i.fas.fa-list
+        h3 Latest Posts
+      #recent-posts.recent-posts.nc
+        .recent-post-items
+          each article, index in page.posts.data.slice(0, theme.latest_posts.limit)
+            - const link = article.link || article.path
+            - const title = article.title || _p('no_title')
+            - const postCover = article.cover || theme.cover.default_cover
+            - const noCover = !postCover || !theme.cover.index_enable ? 'no-cover' : ''
+            
+            .recent-post-item
+              if postCover && theme.cover.index_enable
+                .post_cover.left
+                  a(href=url_for(link) title=title)
+                    img.post-bg(src=url_for(postCover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title)
+              .recent-post-info(class=noCover)
+                a.article-title(href=url_for(link) title=title)
+                  = title
+                .article-meta-wrap
+                  span.post-meta-date
+                    i.far.fa-calendar-alt
+                    time(datetime=date_xml(article.date) title=full_date(article.date))= date(article.date, config.date_format)
+                  if theme.post_meta.page.categories && article.categories.data.length > 0
+                    span.article-meta
+                      span.article-meta-separator |
+                      each item, index in article.categories.data
+                        i.fas.fa-inbox
+                        a(href=url_for(item.path)).article-meta__categories #[=item.name]
+                        if index < article.categories.data.length - 1
+                          i.fas.fa-angle-right.article-meta-link
+                  mixin countBlockInIndex
+                    - needLoadCountJs = true
+                    span.article-meta
+                      span.article-meta-separator |
+                      i.fas.fa-comments
+                      if block
+                        block
+                      span.article-meta-label= ' ' + _p('card_post_count')
+                  if theme.comments.card_post_count && theme.comments.use
+                    - const commentSystem = theme.comments.use[0]
+                    - const commentLink = url_for(link) + '#post-comment'
+                    case commentSystem
+                      when 'Twikoo'
+                        +countBlockInIndex
+                          a.twikoo-count(href=commentLink)
+                            i.fa-solid.fa-spinner.fa-spin
+              - const content = postDesc(article)
+              if content
+                .content!=content
+      
+      include ./pagination.pug
+  
+  // Add JavaScript for carousel functionality
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      const carousel = document.querySelector('.carousel-container');
+      if (!carousel) return;
+      
+      const slides = document.querySelectorAll('.slide-item');
+      const dots = document.querySelectorAll('.nav-dot');
+      const prevBtn = document.querySelector('.prev-slide');
+      const nextBtn = document.querySelector('.next-slide');
+      
+      let currentIndex = 0;
+      
+      function showSlide(index) {
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === index);
+        });
+        
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === index);
+        });
+        
+        currentIndex = index;
+      }
+      
+      function nextSlide() {
+        const nextIndex = (currentIndex + 1) % slides.length;
+        showSlide(nextIndex);
+      }
+      
+      function prevSlide() {
+        const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+        showSlide(prevIndex);
+      }
+      
+      // Auto-advance carousel
+      let carouselInterval = setInterval(nextSlide, theme.index_carousel.interval || 5000);
+      
+      // Pause on hover
+      carousel.addEventListener('mouseenter', () => {
+        clearInterval(carouselInterval);
+      });
+      
+      carousel.addEventListener('mouseleave', () => {
+        carouselInterval = setInterval(nextSlide, theme.index_carousel.interval || 5000);
+      });
+      
+      // Navigation dots
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          showSlide(index);
+        });
+      });
+      
+      // Next/prev buttons
+      if (prevBtn) {
+        prevBtn.addEventListener('click', prevSlide);
+      }
+      
+      if (nextBtn) {
+        nextBtn.addEventListener('click', nextSlide);
+      }
+    });
