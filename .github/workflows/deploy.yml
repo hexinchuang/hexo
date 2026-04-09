@@ -20,9 +20,12 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
+        registry-url: 'https://registry.npmjs.org/'
 
     - name: Install Dependencies
-      run: npm install
+      run: |
+        # Clean install dependencies based on package-lock.json
+        npm ci --legacy-peer-deps
 
     - name: Generate Static Files
       run: |
