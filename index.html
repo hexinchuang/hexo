@@ -1,190 +1,326 @@
-extends includes/layout.pug
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Hexo</title><meta name="author" content="John Doe"><meta name="copyright" content="John Doe"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="https://hexinchuang.github.io/hexo/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://hexinchuang.github.io/hexo/img/butterfly-icon.png">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hexinchuang.github.io/hexo/img/butterfly-icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Hexo",
+  "alternateName": [
+    "hexinchuang.github.io"
+  ],
+  "url": "https://hexinchuang.github.io/hexo/"
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://hexinchuang.github.io/hexo/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.5-b1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
 
-block content
-  include ./includes/mixins/indexPostUI.pug
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
   
-  // Carousel Section
-  if theme.index_carousel.enable
-    .carousel-wrapper
-      .carousel-container(style='height: #{theme.index_carousel.height or "400px"}')
-        .carousel-slide
-          each article, index in page.posts.data.slice(0, 3)  // Limit to 3 slides
-            - const link = article.link || article.path
-            - const title = article.title || _p('no_title')
-            - const postCover = article.cover || theme.cover.default_cover
-            if postCover && index == 0
-              .slide-item.active
-                a(href=url_for(link) title=title)
-                  img.carousel-img(src=url_for(postCover) alt=title)
-                .slide-info
-                  h2.slide-title= title
-                  p.slide-excerpt= postDesc(article)
-            else if postCover
-              .slide-item
-                a(href=url_for(link) title=title)
-                  img.carousel-img(src=url_for(postCover) alt=title)
-                .slide-info
-                  h2.slide-title= title
-                  p.slide-excerpt= postDesc(article)
-        .carousel-nav
-          each article, index in page.posts.data.slice(0, 3)
-            if index == 0
-              .nav-dot.active(data-slide=index)
-            else
-              .nav-dot(data-slide=index)
-        .carousel-controls
-          .prev-slide ❮
-          .next-slide ❯
-  
-  .main-content-wrapper
-    // Announcement and Featured Post Section
-    .side-content
-      // Announcement Section
-      if theme.announcement.enable
-        .announcement-box
-          .announcement-header
-            i.fas.fa-bullhorn
-            h3 Announcement
-          .announcement-content
-            != theme.announcement.content
       
-      // Featured Post Section
-      if theme.featured_post.enable
-        .featured-post
-          .featured-header
-            i.fas.fa-star
-            h3 Featured Post
-          each article, index in page.posts.data.slice(0, theme.featured_post.limit)
-            - const link = article.link || article.path
-            - const title = article.title || _p('no_title')
-            - const postCover = article.cover || theme.cover.default_cover
-            .featured-item
-              if postCover
-                .featured-cover
-                  a(href=url_for(link) title=title)
-                    img(src=url_for(postCover) alt=title)
-              .featured-info
-                a.featured-title(href=url_for(link) title=title)= title
-                .featured-meta
-                  span.date= date(article.date, config.date_format)
-                  span.read-time= article.readtime || '3 min read'
-                .featured-excerpt= postDesc(article)
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
     
-    // Latest Posts Section
-    .main-posts-area
-      .latest-posts-header
-        i.fas.fa-list
-        h3 Latest Posts
-      #recent-posts.recent-posts.nc
-        .recent-post-items
-          each article, index in page.posts.data.slice(0, theme.latest_posts.limit)
-            - const link = article.link || article.path
-            - const title = article.title || _p('no_title')
-            - const postCover = article.cover || theme.cover.default_cover
-            - const noCover = !postCover || !theme.cover.index_enable ? 'no-cover' : ''
-            
-            .recent-post-item
-              if postCover && theme.cover.index_enable
-                .post_cover.left
-                  a(href=url_for(link) title=title)
-                    img.post-bg(src=url_for(postCover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title)
-              .recent-post-info(class=noCover)
-                a.article-title(href=url_for(link) title=title)
-                  = title
-                .article-meta-wrap
-                  span.post-meta-date
-                    i.far.fa-calendar-alt
-                    time(datetime=date_xml(article.date) title=full_date(article.date))= date(article.date, config.date_format)
-                  if theme.post_meta.page.categories && article.categories.data.length > 0
-                    span.article-meta
-                      span.article-meta-separator |
-                      each item, index in article.categories.data
-                        i.fas.fa-inbox
-                        a(href=url_for(item.path)).article-meta__categories #[=item.name]
-                        if index < article.categories.data.length - 1
-                          i.fas.fa-angle-right.article-meta-link
-                  mixin countBlockInIndex
-                    - needLoadCountJs = true
-                    span.article-meta
-                      span.article-meta-separator |
-                      i.fas.fa-comments
-                      if block
-                        block
-                      span.article-meta-label= ' ' + _p('card_post_count')
-                  if theme.comments.card_post_count && theme.comments.use
-                    - const commentSystem = theme.comments.use[0]
-                    - const commentLink = url_for(link) + '#post-comment'
-                    case commentSystem
-                      when 'Twikoo'
-                        +countBlockInIndex
-                          a.twikoo-count(href=commentLink)
-                            i.fa-solid.fa-spinner.fa-spin
-              - const content = postDesc(article)
-              if content
-                .content!=content
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
       
-      include ./pagination.pug
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
   
-  // Add JavaScript for carousel functionality
-  script.
-    document.addEventListener('DOMContentLoaded', function() {
-      const carousel = document.querySelector('.carousel-container');
-      if (!carousel) return;
-      
-      const slides = document.querySelectorAll('.slide-item');
-      const dots = document.querySelectorAll('.nav-dot');
-      const prevBtn = document.querySelector('.prev-slide');
-      const nextBtn = document.querySelector('.next-slide');
-      
-      let currentIndex = 0;
-      
-      function showSlide(index) {
-        slides.forEach((slide, i) => {
-          slide.classList.toggle('active', i === index);
-        });
-        
-        dots.forEach((dot, i) => {
-          dot.classList.toggle('active', i === index);
-        });
-        
-        currentIndex = index;
-      }
-      
-      function nextSlide() {
-        const nextIndex = (currentIndex + 1) % slides.length;
-        showSlide(nextIndex);
-      }
-      
-      function prevSlide() {
-        const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-        showSlide(prevIndex);
-      }
-      
-      // Auto-advance carousel
-      let carouselInterval = setInterval(nextSlide, theme.index_carousel.interval || 5000);
-      
-      // Pause on hover
-      carousel.addEventListener('mouseenter', () => {
-        clearInterval(carouselInterval);
-      });
-      
-      carousel.addEventListener('mouseleave', () => {
-        carouselInterval = setInterval(nextSlide, theme.index_carousel.interval || 5000);
-      });
-      
-      // Navigation dots
-      dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-          showSlide(index);
-        });
-      });
-      
-      // Next/prev buttons
-      if (prevBtn) {
-        prevBtn.addEventListener('click', prevSlide);
-      }
-      
-      if (nextBtn) {
-        nextBtn.addEventListener('click', nextSlide);
-      }
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: 0,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Hexo',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">1</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/privacy/"><i class="fa-fw fas fa-shield-alt"></i><span> 隐私</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/logo.png" alt="Logo"><span class="site-name">Hexo</span></a></span><div id="menus"><!-- Left side menu items--><ul class="left-menu" id="main-menu"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/privacy/"><i class="fa-fw fas fa-shield-alt"></i><span> 隐私</span></a></div></div></ul><!-- Right side items--><ul class="right-menu"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></span></div><a id="login-button" href="/admin/"><span class="site-page social-icon"><i class="fas fa-sign-in-alt fa-fw"></i><span> Login</span></span></a><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></ul></div></nav><div id="site-info"><h1 id="site-title">Hexo</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><!-- Carousel Section--><div class="carousel-wrapper"><div class="carousel-container" style="height: #{theme.index_carousel.height or &quot;400px&quot;}"><div class="carousel-slide"></div><div class="carousel-nav"><div class="nav-dot active" data-slide="0"></div></div><div class="carousel-controls"><div class="prev-slide">❮</div><div class="next-slide">❯</div></div></div></div><div class="main-content-wrapper"><!-- Announcement and Featured Post Section--><div class="side-content"><!-- Announcement Section--><div class="announcement-box"><div class="announcement-header"><i class="fas fa-bullhorn"></i><h3>Announcement</h3></div><div class="announcement-content">Welcome to our website! Stay updated with our latest news.</div></div><!-- Featured Post Section--><div class="featured-post"><div class="featured-header"><i class="fas fa-star"></i><h3>Featured Post</h3></div><div class="featured-item"><div class="featured-info"><a class="featured-title" href="/2026/04/09/hello-world/" title="Hello World">Hello World</a><div class="featured-meta"><span class="date">2026-04-09</span><span class="read-time">3 min read</span></div><div class="featured-excerpt">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &amp;quot;My New Post&amp;quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div></div></div><!-- Latest Posts Section--><div class="main-posts-area"><div class="latest-posts-header"><i class="fas fa-list"></i><h3>Latest Posts</h3></div><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/04/09/hello-world/" title="Hello World">Hello World</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><time datetime="2026-04-09T12:26:46.190Z" title="2026-04-09 12:26:46">2026-04-09</time></span></div></div><div class="content">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div></div></div></div><!-- Add JavaScript for carousel functionality--><script>document.addEventListener('DOMContentLoaded', function() {
+  const carousel = document.querySelector('.carousel-container');
+  if (!carousel) return;
+  
+  const slides = document.querySelectorAll('.slide-item');
+  const dots = document.querySelectorAll('.nav-dot');
+  const prevBtn = document.querySelector('.prev-slide');
+  const nextBtn = document.querySelector('.next-slide');
+  
+  let currentIndex = 0;
+  
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
     });
+    
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+    
+    currentIndex = index;
+  }
+  
+  function nextSlide() {
+    const nextIndex = (currentIndex + 1) % slides.length;
+    showSlide(nextIndex);
+  }
+  
+  function prevSlide() {
+    const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+    showSlide(prevIndex);
+  }
+  
+  // Auto-advance carousel
+  let carouselInterval = setInterval(nextSlide, theme.index_carousel.interval || 5000);
+  
+  // Pause on hover
+  carousel.addEventListener('mouseenter', () => {
+    clearInterval(carouselInterval);
+  });
+  
+  carousel.addEventListener('mouseleave', () => {
+    carouselInterval = setInterval(nextSlide, theme.index_carousel.interval || 5000);
+  });
+  
+  // Navigation dots
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      showSlide(index);
+    });
+  });
+  
+  // Next/prev buttons
+  if (prevBtn) {
+    prevBtn.addEventListener('click', prevSlide);
+  }
+  
+  if (nextBtn) {
+    nextBtn.addEventListener('click', nextSlide);
+  }
+});</script><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">John Doe</div><div class="author-info-description">Welcome to our website</div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">1</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/04/09/hello-world/" title="Hello World">Hello World</a><time datetime="2026-04-09T12:26:46.190Z" title="Created 2026-04-09 12:26:46">2026-04-09</time></div></div></div></div><div class="card-widget" id="card-newest-comments"><div class="item-headline"><i class="fas fa-comment-dots"></i><span>Latest Comments</span></div><div class="aside-list"><span>Loading...</span></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>Archives</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/04/">
+            <span class="card-archive-list-date">
+              April 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Website Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article Count :</div><div class="item-count">1</div></div><div class="webinfo-item"><div class="item-name">Unique Visitors :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">Page Views :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">Last Update :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-04-09T12:26:59.763Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By John Doe</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.5-b1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.5-b1"></script><script src="/js/main.js?v=5.5.5-b1"></script><div class="js-pjax"></div><script>window.newestComments = {
+  changeContent: content => {
+    if (content === '') return content
+
+    content = content.replace(/<img.*?src="(.*?)"?[^\>]+>/ig, '[Image]') // replace image link
+    content = content.replace(/<a[^>]+?href=["']?([^"']+)["']?[^>]*>([^<]+)<\/a>/gi, '[Link]') // replace url
+    content = content.replace(/<pre><code>.*?<\/pre>/gi, '[Code]') // replace code
+    content = content.replace(/<code>.*?<\/code>/gi, '[Code]') // replace code
+    content = content.replace(/<[^>]+>/g, "") // remove html tag
+
+    if (content.length > 150) {
+      content = content.substring(0, 150) + '...'
+    }
+    return content
+  },
+
+  generateHtml: (array, ele) => {
+    let result = ''
+
+    if (array.length) {
+      for (let i = 0; i < array.length; i++) {
+        result += '<div class="aside-list-item">'
+
+        if (true && array[i].avatar) {
+          const imgAttr = 'src'
+          const lazyloadNative = ''
+          result += `<a href="${array[i].url}" class="thumbnail"><img ${imgAttr}="${array[i].avatar}" alt="${array[i].nick}" ${lazyloadNative}></a>`
+        }
+
+        result += `<div class="content">
+        <a class="comment" href="${array[i].url}" title="${array[i].content}">${array[i].content}</a>
+        <div class="name"><span>${array[i].nick} / </span><time datetime="${array[i].date}">${btf.diffDate(array[i].date, true)}</time></div>
+        </div></div>`
+      }
+    } else {
+      result += 'No comments'
+    }
+
+    ele.innerHTML = result
+    window.lazyLoadInstance && window.lazyLoadInstance.update()
+    window.pjax && window.pjax.refresh(ele)
+  },
+
+  newestCommentInit: (name, getComment) => {
+    const $dom = document.querySelector('#card-newest-comments .aside-list')
+    if ($dom) {
+      const data = btf.saveToLocal.get(name)
+      if (data) {
+        newestComments.generateHtml(JSON.parse(data), $dom)
+      } else {
+        getComment($dom)
+      }
+    }
+  },
+
+  run: (name, getComment) => {
+    newestComments.newestCommentInit(name, getComment)
+    btf.addGlobalFn('pjaxComplete', () => newestComments.newestCommentInit(name, getComment), name)
+  }
+}</script><script>window.addEventListener('load', () => {
+  const keyName = 'twikoo-newest-comments'
+  const { changeContent, generateHtml, run } = window.newestComments
+
+  const getComment = ele => {
+    const runTwikoo = () => {
+      twikoo.getRecentComments({
+        envId: 'https://your-worker.your-subdomain.workers.dev',
+        region: '',
+        pageSize: 6,
+        includeReply: true
+      }).then(res => {
+        const twikooArray = res.map(e => {
+          return {
+            'content': changeContent(e.comment),
+            'avatar': e.avatar,
+            'nick': e.nick,
+            'url': e.url + '#' + e.id,
+            'date': new Date(e.created).toISOString()
+          }
+        })
+
+        btf.saveToLocal.set(keyName, JSON.stringify(twikooArray), 10/(60*24))
+        generateHtml(twikooArray, ele)
+      }).catch(err => {
+        console.error(err)
+        ele.textContent= "Unable to retrieve comments, please check the configuration"
+      })
+    }
+
+    if (typeof twikoo === 'object') {
+      runTwikoo()
+    } else {
+      btf.getScript('https://cdn.jsdelivr.net/npm/twikoo@1.6.44/dist/twikoo.all.min.js').then(runTwikoo)
+    }
+  }
+
+  run(keyName, getComment)
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading Database</span></div><div class="local-search-input"><input placeholder="Search articles..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.5-b1"></script></div></div></body></html>
