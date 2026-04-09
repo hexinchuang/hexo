@@ -8,7 +8,7 @@ block content
     .carousel-wrapper
       .carousel-container(style='height: #{theme.index_carousel.height or "400px"}')
         .carousel-slide
-          each article, index in page.posts.data.slice(0, 3)  // Limit to 3 slides
+          each article, index in page.posts.data.slice(0, 3)
             - const link = article.link || article.path
             - const title = article.title || _p('no_title')
             - const postCover = article.cover || theme.cover.default_cover
@@ -123,7 +123,7 @@ block content
               if content
                 .content!=content
       
-      include ./pagination.pug
+      include ./includes/pagination.pug
   
   // Add JavaScript for carousel functionality
   script.

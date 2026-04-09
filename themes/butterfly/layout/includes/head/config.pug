@@ -1,7 +1,7 @@
 -
   let algolia = 'undefined'
-  if (theme.search.use === 'algolia_search') {
-    const { ALGOLIA_APP_ID, ALGOLIA_API_KEY, ALGOLIA_INDEX_NAME } = process.env
+  if (theme.search.use === 'algolia_search' && typeof process !== 'undefined' && process && process.env) {
+    const { ALGOLIA_APP_ID, ALGOLIA_API_KEY, ALGOLIA_INDEX_NAME } = (process && process.env) || {}
     const { appId, applicationID, apiKey, indexName } = config.algolia
     algolia = JSON.stringify({
       appId: ALGOLIA_APP_ID || appId || applicationID,
@@ -17,7 +17,7 @@
   }
 
   let localSearch = 'undefined'
-  if (theme.search.use === 'local_search') {
+  if (theme.search.use === 'local_search' && config.search && config.search.path) {
     const { CDN, preload, top_n_per_article, pagination, unescape } = theme.search.local_search
     localSearch = JSON.stringify({
       path: CDN || config.root + config.search.path,
@@ -25,7 +25,7 @@
       top_n_per_article,
       unescape,
       pagination: {
-        enable: pagination.enable,
+        enable: pagination.enable && pagination.enable,
         hitsPerPage: pagination.hitsPerPage
       },
       languages: {
@@ -85,7 +85,7 @@
 
 script.
   const GLOBAL_CONFIG = {
-    root: '!{config.root}',
+    root: '!{config.root || "/"}',
     algolia: !{algolia},
     localSearch: !{localSearch},
     translate: !{translate},
@@ -96,10 +96,10 @@ script.
       noSupport: '!{_p("copy.noSupport")}'
     },
     relativeDate: {
-      homepage: !{theme.post_meta.page.date_format === 'relative'},
-      post: !{theme.post_meta.post.date_format === 'relative'}
+      homepage: !{(theme.post_meta && theme.post_meta.page && theme.post_meta.page.date_format) === 'relative'},
+      post: !{(theme.post_meta && theme.post_meta.post && theme.post_meta.post.date_format) === 'relative'}
     },
-    runtime: '!{theme.aside.card_webinfo.runtime_date ? _p("aside.card_webinfo.runtime.unit") : ""}',
+    runtime: '!{((theme.aside && theme.aside.card_webinfo && theme.aside.card_webinfo.runtime_date) ? _p("aside.card_webinfo.runtime.unit") : "")}',
     dateSuffix: {
       just: '!{_p("date_suffix.just")}',
       min: '!{_p("date_suffix.min")}',
@@ -111,15 +111,15 @@ script.
     lightbox: '!{ theme.lightbox || 'null' }',
     Snackbar: !{Snackbar},
     infinitegrid: {
-      js: '!{url_for(theme.asset.egjs_infinitegrid)}',
+      js: '!{url_for(theme.asset.egjs_infinitegrid || "/")}',
       buttonText: '!{_p("load_more")}'
     },
-    isPhotoFigcaption: !{theme.photofigcaption},
-    islazyloadPlugin: !{theme.lazyload.enable && !theme.lazyload.native},
-    isAnchor: !{theme.anchor.auto_update || false},
+    isPhotoFigcaption: !{theme.photofigcaption || false},
+    islazyloadPlugin: !{(theme.lazyload && theme.lazyload.enable) && !(theme.lazyload && theme.lazyload.native)},
+    isAnchor: !{(theme.anchor && theme.anchor.auto_update) || false},
     percent: {
-      toc: !{theme.toc.scroll_percent},
-      rightside: !{theme.rightside_scroll_percent},
+      toc: !{(theme.toc && theme.toc.scroll_percent) || 0},
+      rightside: !{(theme.rightside_scroll_percent) || 0},
     },
-    autoDarkmode: !{theme.darkmode.enable && theme.darkmode.autoChangeMode === 1}
+    autoDarkmode: !{(theme.darkmode && theme.darkmode.enable && theme.darkmode.autoChangeMode) === 1}
   }
