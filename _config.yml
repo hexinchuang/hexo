@@ -102,10 +102,5 @@ theme: butterfly
 
 deploy:
   type: git
-  repo: https://github.com/your-username/your-username.github.io.git
-  branch: main
-
-# Deployment
-## Docs: https://hexo.io/docs/one-command-deployment
-deploy:
-  type: ''
+  repo: https://github.com/hexinchuang/hexo.git
+  branch: gh-pages
